@@ -16,7 +16,7 @@ class Cap(Base):
 
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     name = Column(String(32))
-    image = Column(Text)        # TODO(annad): How update link to object if change server?
+    image = Column(Text)
     description = Column(Text)
     price = Column(Float, index=True)
     created = Column(DateTime(timezone=True), index=True, default=datetime.utcnow)
