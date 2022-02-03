@@ -1,12 +1,13 @@
 from api.models import  Cap
-from api import DBSession
+from api import DBSession, Base, DBEngine
 
 
 def fill_db_cap_from_dict(dict_repr_cap: dict):
+    Base.metadata.create_all(DBEngine, checkfirst=True)
+
     assert (len(dict_repr_cap['size']) == 4), 'len(size) my be 4'
 
     c = Cap()
-
     c.name =        dict_repr_cap['name']
     c.image =       dict_repr_cap['image']
     c.description = dict_repr_cap['description']
