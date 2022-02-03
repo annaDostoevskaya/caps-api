@@ -1,8 +1,10 @@
 from api.models import  Cap
 from api import DBSession
-from time import sleep
+
 
 def fill_db_cap_from_dict(dict_repr_cap: dict):
+    assert (len(dict_repr_cap['size']) == 4), 'len(size) my be 4'
+
     c = Cap()
 
     c.name =        dict_repr_cap['name']
@@ -20,3 +22,12 @@ def fill_db_cap_from_dict(dict_repr_cap: dict):
         sess.add(c)
         sess.commit()
         sess.close()
+
+
+def print_all_database_cap_table():
+    with DBSession() as sess:
+        all_caps = sess.query(Cap).filter_by().all()
+        sess.close()
+
+    for cap in all_caps:
+        cap.display()

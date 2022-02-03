@@ -8,10 +8,11 @@ from sqlalchemy.ext.declarative import declarative_base
 class Cap(Base):
     __tablename__ = 'caps'
     __tableargs__ = {
-        'comment': '''  Storage ONE CAP. Image representation, description, 
-price, sell price, date of create and update, brand in name and index, size.'''
+        'comment': 'Storage ONE CAP. Image representation, description, '
+                   'price, sell price, date of create and update, '
+                   'brand in name and index, size.'
     }
-    dict_repr = None
+    dict_repr = None # Cache.
 
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     name = Column(String(32))
