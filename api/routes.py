@@ -13,7 +13,7 @@ async def get_caps():
         2: ("San Francisco Baseball",),
     }
 
-    # TODO(annad): Create database.
+    # TODO(annad): Change moke object to data from DB.
     res = {
         "count": 2,
         "next": None,
@@ -55,7 +55,7 @@ async def get_caps():
 
 '''
 LINK FOR TEST: 
-http://192.168.2.136:8000/media/caps/boston-celtics-basic-green-59fifty-fitted-new-era.png
+http://192.168.2.136:8000/media/caps/20220203115901001.svg
 '''
 @app.get('/media/caps/{path_to_cap_png}')
 def get_media_cap(path_to_cap_png):
