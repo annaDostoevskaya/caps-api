@@ -26,7 +26,9 @@ def fill_db_cap_from_dict(dict_repr_cap: dict):
     c: Cap = Cap()
 
     with DBSession() as sess:
-        cb: CapsBrand = sess.query(CapsBrand).filter_by(id=dict_repr_cap['brand']).all()[0]
+        cbs: CapsBrand = sess.query(CapsBrand).filter_by(id=dict_repr_cap['brand']).all()
+        assert len(cbs) == 1, 'This brand_index is not in the database.'
+        cb = cbs[0]
 
         c.name =            dict_repr_cap['name']
         c.image =           dict_repr_cap['image']
@@ -53,4 +55,13 @@ def print_all_database_cap_table():
 
     for cap in all_caps:
         cap.display()
-        print(cap.caps_brand)
+
+def print_all_database_caps_brand_table():
+    assert path.isfile('app.db')
+
+    with DBSession() as sess:
+        all_caps_brands = sess.query(CapsBrand).filter_by().all()
+        sess.close()
+
+    for caps_brand in all_caps_brands:
+        caps_brand.display()

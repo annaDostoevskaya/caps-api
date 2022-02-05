@@ -14,6 +14,8 @@ class CapsBrand(Base):
                    'where brand is ID in this table.'
     }
 
+    dict_repr = None
+
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     name = Column(String(32))
     description = Column(Text)
@@ -22,6 +24,28 @@ class CapsBrand(Base):
 
     def __repr__(self):
         return '<CapsBrand id: {id}, name: {name}>'.format(id=self.id, name=self.name)
+
+    def get_dict_repr(self):
+        if self.dict_repr is None:
+            self.dict_repr = {
+                'id': self.id,
+                'name': self.name,
+                'description': self.description,
+                'image': self.image
+            }
+
+        return self.dict_repr
+
+    def display(self):
+        str_from_dict = ('id: {id}\n'
+                         'name: {name}\n'
+                         'description: {description}\n'
+                         'image: {image}\n'
+        ).format_map(
+            self.get_dict_repr()
+        )
+
+        print(str_from_dict)
 
 class Cap(Base):
     __tablename__ = 'caps'
@@ -46,10 +70,10 @@ class Cap(Base):
     caps_brand = relationship('CapsBrand', backref='parents', lazy='joined')
     # caps_brand = relationship('CapBrand', back_populates='parents')
 
-    # TODO(annad): find method use array in SQLite.
-    # Plugins? Or...
-    # NOTE(annad): About SQLite: https://vk.com/wall-201010673_790
-    # Mb change database appliaction?
+    ## TODO(annad): find method use array in SQLite.
+    ## Plugins? Or...
+    ## NOTE(annad): About SQLite: https://vk.com/wall-201010673_790
+    ## Mb change database appliaction?
     size_1 = Column(Integer, default=0)
     size_2 = Column(Integer, default=0)
     size_3 = Column(Integer, default=0)
@@ -59,25 +83,24 @@ class Cap(Base):
         return "<Caps id: {id}, name: {name}>".format(id=self.id, name=self.name)
 
     def get_dict_repr(self):
-        if not (self.dict_repr is None):
-            return self.dict_repr
-        else:
+        if self.dict_repr is None:
             self.dict_repr = {
-            "id": self.id,
-            "name": self.name,
-            "image": self.image,
-            "description": self.description,
-            "price": self.price,
-            "created": self.created,
-            "updated": self.updated,
-            "new_price": self.new_price,
-            "brand": self.caps_brand_id, # Change from self.brand(!)
-            "size_1": self.size_1,
-            "size_2": self.size_2,
-            "size_3": self.size_3,
-            "size_4": self.size_4,
-        }
-            return self.dict_repr
+                "id": self.id,
+                "name": self.name,
+                "image": self.image,
+                "description": self.description,
+                "price": self.price,
+                "created": self.created,
+                "updated": self.updated,
+                "new_price": self.new_price,
+                "brand": self.caps_brand_id, ## Change from self.brand(!)
+                "size_1": self.size_1,
+                "size_2": self.size_2,
+                "size_3": self.size_3,
+                "size_4": self.size_4,
+            }
+
+        return self.dict_repr
 
     def display(self):
         str_repr_from_dict = ('id: {id};\n'

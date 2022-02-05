@@ -1,3 +1,5 @@
+import os
+
 from api import app, conf, DBSession
 from fastapi.responses import FileResponse
 
@@ -7,13 +9,13 @@ async def root():
 
 @app.get('/api/v1/caps/')
 async def get_caps():
-    # TODO(anand): Create real table of brands.
+    ## TODO(anand): Create real table of brands.
     table_brands = {
         1: ("Golden State Warriors", "French Fries Series",),
         2: ("San Francisco Baseball",),
     }
 
-    # TODO(annad): Change moke object to data from DB.
+    ## TODO(annad): Change moke object to data from DB.
     res = {
         "count": 2,
         "next": None,
@@ -57,7 +59,8 @@ async def get_caps():
 LINK FOR TEST: 
 http://192.168.2.136:8000/media/caps/20220203115901001.svg
 '''
-@app.get('/media/caps/{path_to_cap_png}')
-def get_media_cap(path_to_cap_png):
+@app.get('/media/{directory}/{name}')
+def get_media_cap(directory, name):
     # TODO(annad): Download all images caps from site.
-    return FileResponse(conf.STATIC_IMAGE_CAPS_DIR + path_to_cap_png)
+    image_path = os.path.join(directory, name)
+    return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, image_path))
