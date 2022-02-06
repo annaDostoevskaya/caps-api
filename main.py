@@ -5,10 +5,14 @@ from uvicorn import run
 from dev import dbutils
 
 if __name__ == '__main__':
-    # print('\n\n\n')
-    # dbutils.print_all_database_cap_table()
-    # print('\n')
-    # dbutils.print_all_database_caps_brand_table()
-    # print('\n\n\n')
-    run(app, host=conf.IP_ADDRESS, port=int(conf.PORT))
+    # dbutils.fill()
+
+    print('\n\n\n')
+    dbutils.print_all_database_cap_table()
+    print('\n')
+    dbutils.print_all_database_caps_brand_table()
+    print('\n\n\n')
+
+
+    # run(app, host=conf.IP_ADDRESS, port=int(conf.PORT))
 

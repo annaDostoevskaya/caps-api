@@ -8,7 +8,9 @@ async def root():
     return {'name_api': 'CapsApi'}
 
 @app.get('/api/v1/caps/')
-async def get_caps():
+async def get_caps(page=1):
+    ## TODO(annad): Caps paging. For example: caps/?page=1
+
     ## TODO(anand): Create real table of brands.
     table_brands = {
         1: ("Golden State Warriors", "French Fries Series",),
