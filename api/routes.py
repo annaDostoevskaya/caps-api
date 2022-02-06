@@ -1,7 +1,11 @@
 import os
 
 from api import app, conf, DBSession
+from api.models import Cap, CapsBrand
 from fastapi.responses import FileResponse
+
+def calc_pointer_id(page, pg_size):
+    return ((page - 1) * pg_size) + 1
 
 @app.get('/')
 async def root():
@@ -9,9 +13,15 @@ async def root():
 
 @app.get('/api/v1/caps/')
 async def get_caps(page=1, pg_size=5):
-    ## TODO(annad): Caps paging. For example: caps/?page=1
-
     ## TODO(annad): Change moke object to data from DB.
+    res = {}
+
+    ## TODO(annad): How can this be done correctly?
+    pointer_id = calc_pointer_id(page, pg_size)
+
+    with DBSession() as sess:
+        caps = sess.query(Cap).filter(Cap.id >= pointer_id, Cap.id < pointer_id + pg_size).all()
+
     res = {
         "count": 2,
         "next": None,
