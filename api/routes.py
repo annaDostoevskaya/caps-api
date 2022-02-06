@@ -13,6 +13,8 @@ async def root():
 
 @app.get('/api/v1/caps/')
 async def get_caps(page=1, pg_size=5):
+    ## TODO(annad): Perform code refactoring
+
     page = int(page)
     pg_size = int(pg_size)
     res = {}
@@ -45,7 +47,7 @@ async def get_caps(page=1, pg_size=5):
 
 @app.get('/api/v1/brands/{brand_id}')
 async def get_brand(brand_id):
-    ## TODO(anand): Create real table of brands.
+    ## TODO(anand): Change moke object to real data from db.
     table_brands = {
         '1': ["Golden State Warriors", "French Fries Series"],
         '2': ["San Francisco Baseball",],
