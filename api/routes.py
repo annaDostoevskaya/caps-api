@@ -8,14 +8,8 @@ async def root():
     return {'name_api': 'CapsApi'}
 
 @app.get('/api/v1/caps/')
-async def get_caps(page=1):
+async def get_caps(page=1, pg_size=5):
     ## TODO(annad): Caps paging. For example: caps/?page=1
-
-    ## TODO(anand): Create real table of brands.
-    table_brands = {
-        1: ("Golden State Warriors", "French Fries Series",),
-        2: ("San Francisco Baseball",),
-    }
 
     ## TODO(annad): Change moke object to data from DB.
     res = {
@@ -57,12 +51,20 @@ async def get_caps(page=1):
     }
     return res
 
+@app.get('/api/v1/brands/{brand_id}')
+async def get_brand(brand_id):
+    ## TODO(anand): Create real table of brands.
+    table_brands = {
+        '1': ["Golden State Warriors", "French Fries Series"],
+        '2': ["San Francisco Baseball",],
+    }
+    return table_brands[brand_id]
+
 '''
 LINK FOR TEST: 
-http://192.168.2.136:8000/media/caps/20220203115901001.svg
+http://192.168.2.136:8000/media/caps/20220206172612100.jpg
 '''
 @app.get('/media/{directory}/{name}')
-def get_media_cap(directory, name):
-    # TODO(annad): Download all images caps from site.
+async def get_media_cap(directory, name):
     image_path = os.path.join(directory, name)
     return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, image_path))
