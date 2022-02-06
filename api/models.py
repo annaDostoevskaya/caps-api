@@ -87,17 +87,14 @@ class Cap(Base):
             self.dict_repr = {
                 "id": self.id,
                 "name": self.name,
-                "image": self.image,
+                "image": 'http://192.168.2.136:8000/' + self.image,
                 "description": self.description,
                 "price": self.price,
                 "created": self.created,
                 "updated": self.updated,
                 "new_price": self.new_price,
                 "brand": self.caps_brand_id, ## Change from self.brand(!)
-                "size_1": self.size_1,
-                "size_2": self.size_2,
-                "size_3": self.size_3,
-                "size_4": self.size_4,
+                "size": [self.size_1, self.size_2, self.size_3, self.size_4]
             }
 
         return self.dict_repr

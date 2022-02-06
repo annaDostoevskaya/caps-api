@@ -20,7 +20,6 @@ def fill_db_caps_brand_from_dict(dict_repr_caps_brand: dict):
     with DBSession() as sess:
         sess.add(cb)
         sess.commit()
-        sess.close()
 
 
 def fill_db_cap_from_dict(dict_repr_cap: dict):
@@ -48,7 +47,6 @@ def fill_db_cap_from_dict(dict_repr_cap: dict):
 
         sess.add(c)
         sess.commit()
-        sess.close()
 
 
 def print_all_database_cap_table():
@@ -56,7 +54,6 @@ def print_all_database_cap_table():
 
     with DBSession() as sess:
         all_caps = sess.query(Cap).filter_by().all()
-        sess.close()
 
     for cap in all_caps:
         cap.display()
@@ -66,7 +63,6 @@ def print_all_database_caps_brand_table():
 
     with DBSession() as sess:
         all_caps_brands = sess.query(CapsBrand).filter_by().all()
-        sess.close()
 
     for caps_brand in all_caps_brands:
         caps_brand.display()
