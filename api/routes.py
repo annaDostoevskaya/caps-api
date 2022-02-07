@@ -41,18 +41,27 @@ async def get_caps(page=1, pg_size=5):
 
     res['results'] = []
     for cap in caps:
+        cap.image = 'http://192.168.2.136:8000/' + cap.image
         res['results'].append(cap.get_dict_repr())
 
     return res
 
 @app.get('/api/v1/brands/{brand_id}')
 async def get_brand(brand_id):
-    ## TODO(anand): Change moke object to real data from db.
-    table_brands = {
-        '1': ["Golden State Warriors", "French Fries Series"],
-        '2': ["San Francisco Baseball",],
-    }
-    return table_brands[brand_id]
+    ## TODO(annad): Perform code refactoring
+    brand_id = int(brand_id)
+
+    with DBSession() as sess:
+        brand = sess.query(CapsBrand).filter(CapsBrand.id == brand_id).all()
+
+    if len(brand) != 1:
+        return None
+
+    brand: CapsBrand = brand[0]
+    res = brand.get_dict_repr()
+    res['image'] = 'http://192.168.2.136:8000/' + res['image']
+
+    return res
 
 '''
 LINK FOR TEST: 

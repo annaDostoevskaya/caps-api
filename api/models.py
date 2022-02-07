@@ -87,7 +87,7 @@ class Cap(Base):
             self.dict_repr = {
                 "id": self.id,
                 "name": self.name,
-                "image": 'http://192.168.2.136:8000/' + self.image,
+                "image": self.image,
                 "description": self.description,
                 "price": self.price,
                 "created": self.created,
