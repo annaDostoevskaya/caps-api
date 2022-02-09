@@ -1,39 +1,50 @@
 import os
 
-from api import app, conf
-from api.models import CapsBrand
+from api import app, conf, DBSession
 from fastapi.responses import FileResponse
+from api.models import Cap, CapsBrand
 
-from api.auxil_func.get_caps import *
-from api.auxil_func.get_brand import *
+from api.paging import Page
+
+
+def get_caps_brand_db_request(brand_id: int) -> list[CapsBrand]:
+    with DBSession() as sess:
+        brand = sess.query(CapsBrand).filter(CapsBrand.id == brand_id).all()
+    return brand
+
+
+def get_caps_db_request(pg: Page) -> list[Cap]:
+    with DBSession() as sess:
+        caps = sess.query(Cap).filter(Cap.id >= pg.start_id(), Cap.id < pg.end_id()).all()
+    return caps
+
 
 @app.get('/')
 async def root():
     return {'name_api': 'CapsApi'}
 
 @app.get('/api/v1/caps/')
-async def get_caps(page: int = 1, pg_size: int = 5):
-    if (page <= 0) or (pg_size <= 0):
+async def get_caps(number_page: int = 1, pg_size: int = 5):
+    if (number_page <= 0) or (pg_size <= 0):
         return None
 
-    pointer_id = calc_pointer_id_in_db(page, pg_size) ## NOTE(annad): How can this be done correctly?
-    caps = get_caps_db_request(pointer_id, pg_size)
+    pg = Page(number_page, pg_size, '?number_page={}&pg_size={}')
+    caps: list[Cap] = get_caps_db_request(pg)
 
     if len(caps) == 0:
         return None
 
     res = {
-        'count': '',
+        'count': 0,
         'next': '',
         'previous': '',
         'results': []
     }
 
     res['count'] = len(caps)
-    res['next'] = None if res['count'] < pg_size else conf.base_url_generate('/api/' + conf.API_VER + '/caps/') + \
-                                                      '?page={page}&pg_size={pg_size}'.format(page=page+1, pg_size=pg_size)
-    res['previous'] = None if page == 1 else conf.base_url_generate('/api/' + conf.API_VER + '/caps/') + \
-                                             '?page={page}&pg_size={pg_size}'.format(page=page-1, pg_size=pg_size)
+    res['next'] = None if res['count'] < pg.size else conf.base_url_generate('/api/' + conf.API_VER + '/caps/') + pg.next().string_format
+    res['previous'] = None if pg.number == 1 else conf.base_url_generate('/api/' + conf.API_VER + '/caps/') + pg.previous().string_format
+
 
     for cap in caps:
         cap.image = conf.base_url_generate('/' + cap.image)
@@ -53,8 +64,8 @@ async def get_brand(brand_id: int = 1):
         return None
 
     brand: CapsBrand = brand[0]
+    brand.image = conf.base_url_generate('/' + brand.image)
     res = brand.get_dict_repr()
-    res['image'] = conf.base_url_generate('/' + res['image'])
 
     return res
 
