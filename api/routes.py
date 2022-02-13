@@ -1,11 +1,24 @@
 import os
 
 from api import app, conf, DBSession
-from fastapi.responses import FileResponse
 from api.models import Cap, CapsBrand
-
 from api.paging import Page
 
+from fastapi.responses import FileResponse
+'''
+from pydantic import BaseModel
+
+class __Data(BaseModel):
+    name:   str
+    age:    int
+
+_d = __Data(name='Anna', age=20)
+
+@app.post('/posting-data/')
+def posting_data(data: __Data):
+    print(data)
+    return {'Result':'SUCCESS'}
+'''
 
 def get_caps_brand_db_request(brand_id: int) -> list[CapsBrand]:
     with DBSession() as sess:
@@ -53,7 +66,7 @@ async def get_caps(number_page: int = 1, pg_size: int = 5):
     return res
 
 
-@app.get('/api/v1/brands/{brand_id}')
+@app.get('/api/v1/brands/{brand_id}/')
 async def get_brand(brand_id: int = 1):
     if brand_id <= 0:
         return None
@@ -69,7 +82,11 @@ async def get_brand(brand_id: int = 1):
 
     return res
 
-@app.get('/media/{directory}/{name}')
+@app.get('/media/{directory}/{name}/')
 async def get_media_cap(directory, name):
     image_path = os.path.join(directory, name)
     return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, image_path))
+
+@app.post('/login/')
+async def login():
+    return True

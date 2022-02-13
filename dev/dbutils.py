@@ -2,6 +2,19 @@
 ## through the admin panel for example. Maybe later I will write it.
 ## But right now I'm working on API, so it's not possible.
 
+'''
+Example:
+
+from dev import dbutils
+dbutils.fill()
+print('\n\n\n')
+dbutils.print_all_database_cap_table()
+print('\n')
+dbutils.print_all_database_caps_brand_table()
+print('\n\n\n')
+
+'''
+
 from os import path
 
 from api.models import  Cap, CapsBrand

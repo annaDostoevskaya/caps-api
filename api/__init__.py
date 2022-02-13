@@ -5,6 +5,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import create_engine
 
 app = FastAPI()
+app.description = 'It\'s CapsApi, API for internet shop of caps'
+
 conf = Config()
 
 ## NOTE(annad): `Base.metadata.create_all(DBEngine)` for add in base tables, ORM.
