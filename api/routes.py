@@ -4,7 +4,8 @@ from api import app, conf, DBSession
 from api.models import Cap, CapsBrand
 from api.paging import Page
 
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
+
 '''
 from pydantic import BaseModel
 
@@ -35,6 +36,12 @@ def get_caps_db_request(pg: Page) -> list[Cap]:
 @app.get('/')
 async def root():
     return {'name_api': 'CapsApi'}
+
+@app.get('/api/v1/caps/{cap_id}')
+async def get_cap_by_id(cap_id: int):
+    # NOTE(annad): Mb made specificly request for ONE cap?..
+    res = RedirectResponse(url=f'/api/v1/caps/?number_page={cap_id}&pg_size=1')
+    return res
 
 @app.get('/api/v1/caps/')
 async def get_caps(number_page: int = 1, pg_size: int = 5):
@@ -87,6 +94,9 @@ async def get_media_cap(directory, name):
     image_path = os.path.join(directory, name)
     return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, image_path))
 
-@app.post('/login/')
-async def login():
-    return True
+# https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/#oauth2passwordrequestform
+from typing import Optional
+from fastapi import Header
+@app.get('/api/v1/check-token/')
+async def check_token(fuckingshit: Optional[str] = Header(None)):
+    return {"Authorization": fuckingshit}
