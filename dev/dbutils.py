@@ -53,10 +53,7 @@ def fill_db_cap_from_dict(dict_repr_cap: dict):
         c.price =           dict_repr_cap['price']
         c.new_price =       dict_repr_cap['new_price']
         c.caps_brand_id =   cb.id
-        c.size_1 =          dict_repr_cap['size'][0]
-        c.size_2 =          dict_repr_cap['size'][1]
-        c.size_3 =          dict_repr_cap['size'][2]
-        c.size_4 =          dict_repr_cap['size'][3]
+        c.size =            dict_repr_cap['size']
 
         sess.add(c)
         sess.commit()
@@ -82,7 +79,7 @@ def print_all_database_caps_brand_table():
 
 
 def fill():
-    assert (not path.isfile('app.db')), 'Database found. Database must be empty. Delete the database'
+    # assert (not path.isfile('app.db')), 'Database found. Database must be empty. Delete the database'
 
     ## Cap's Brands Table Fill.
     fill_db_caps_brand_from_dict(db_dict_repr.cap_brand_id_1)

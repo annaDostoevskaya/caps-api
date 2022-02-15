@@ -4,6 +4,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Float, String, Text, Date, D
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects import postgresql
 
 
 class CapsBrand(Base):
@@ -17,7 +18,7 @@ class CapsBrand(Base):
     dict_repr = None
 
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    name = Column(String(32))
+    name = Column(String(64))
     description = Column(Text)
     image = Column(String(128))
     # caps = relationship("Cap", back_populates="child")
@@ -57,7 +58,7 @@ class Cap(Base):
     dict_repr = None # Cache.
 
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    name = Column(String(32))
+    name = Column(String(64))
     image = Column(String(128))
     description = Column(Text)
     price = Column(Float, index=True)
@@ -74,10 +75,8 @@ class Cap(Base):
     ## Plugins? Or...
     ## NOTE(annad): About SQLite: https://vk.com/wall-201010673_790
     ## Mb change database appliaction?
-    size_1 = Column(Integer, default=0)
-    size_2 = Column(Integer, default=0)
-    size_3 = Column(Integer, default=0)
-    size_4 = Column(Integer, default=0)
+
+    size = Column(postgresql.ARRAY(postgresql.INTEGER))
 
     def __repr__(self):
         return "<Caps id: {id}, name: {name}>".format(id=self.id, name=self.name)
@@ -94,7 +93,7 @@ class Cap(Base):
                 "updated": self.updated,
                 "new_price": self.new_price,
                 "brand": self.caps_brand_id, ## Change from self.brand(!)
-                "size": [self.size_1, self.size_2, self.size_3, self.size_4]
+                "size": self.size
             }
 
         return self.dict_repr
@@ -109,7 +108,7 @@ class Cap(Base):
                               'updated: {updated};\n'
                               'new_price: {new_price};\n'
                               'brand index: {brand};\n'
-                              'size: {size_1}, {size_2}, {size_3}, {size_4};\n'
+                              'size: {size};\n'
         ).format_map(
             self.get_dict_repr()
         )

@@ -3,6 +3,9 @@
 from api import app, routes, models, conf
 from uvicorn import run
 
+# from dev import dbutils
+
 if __name__ == '__main__':
+    # dbutils.fill()
     run(app, host=conf.IP_ADDRESS, port=int(conf.PORT))
 

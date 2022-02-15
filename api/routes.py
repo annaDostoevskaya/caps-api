@@ -21,13 +21,13 @@ def posting_data(data: __Data):
     return {'Result':'SUCCESS'}
 '''
 
-def get_caps_brand_db_request(brand_id: int) -> list[CapsBrand]:
+async def get_caps_brand_db_request(brand_id: int) -> list[CapsBrand]:
     with DBSession() as sess:
         brand = sess.query(CapsBrand).filter(CapsBrand.id == brand_id).all()
     return brand
 
 
-def get_caps_db_request(pg: Page) -> list[Cap]:
+async def get_caps_db_request(pg: Page) -> list[Cap]:
     with DBSession() as sess:
         caps = sess.query(Cap).filter(Cap.id >= pg.start_id(), Cap.id < pg.end_id()).all()
     return caps
@@ -49,7 +49,7 @@ async def get_caps(number_page: int = 1, pg_size: int = 5):
         return None
 
     pg = Page(number_page, pg_size, '?number_page={}&pg_size={}')
-    caps: list[Cap] = get_caps_db_request(pg)
+    caps: list[Cap] = await get_caps_db_request(pg)
 
     if len(caps) == 0:
         return None
@@ -78,7 +78,7 @@ async def get_brand(brand_id: int = 1):
     if brand_id <= 0:
         return None
 
-    brand = get_caps_brand_db_request(brand_id)
+    brand = await get_caps_brand_db_request(brand_id)
 
     if len(brand) != 1:
         return None
