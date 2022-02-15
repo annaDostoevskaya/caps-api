@@ -89,14 +89,6 @@ async def get_brand(brand_id: int = 1):
 
     return res
 
-@app.get('/media/{directory}/{name}/')
-async def get_media_cap(directory, name):
-    image_path = os.path.join(directory, name)
-    return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, image_path))
-
-# https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/#oauth2passwordrequestform
-from typing import Optional
-from fastapi import Header
-@app.get('/api/v1/check-token/')
-async def check_token(fuckingshit: Optional[str] = Header(None)):
-    return {"Authorization": fuckingshit}
+@app.get('/media/{file_path:path}')
+async def get_media_cap(file_path):
+    return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, file_path))
