@@ -1,3 +1,4 @@
 fastapi[all]
 sqlalchemy==1.4.31
 psycopg2==2.9.3
+httpx==0.22.0

@@ -14,5 +14,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
 
+    VKAPP_ID = os.environ.get('VKAPP_ID')
+    VKAPP_SERCRET_KEY = os.environ.get('VKAPP_SECRET_KEY')
+    VKREDIRECT_URL = os.environ.get('VKREDIRECT_AUTH_URL')
+
     def base_url_generate(self, body='/'):
         return self.APPLICATION_URL + body

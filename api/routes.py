@@ -6,6 +6,9 @@ from api.paging import Page
 
 from fastapi.responses import FileResponse, RedirectResponse
 
+import httpx
+import json
+
 '''
 from pydantic import BaseModel
 
@@ -32,6 +35,10 @@ async def get_caps_db_request(pg: Page) -> list[Cap]:
         caps = sess.query(Cap).filter(Cap.id >= pg.start_id(), Cap.id < pg.end_id()).all()
     return caps
 
+
+# @app.get('/favicon.ico', include_in_schema=False)
+# async def favicon():
+#     return FileResponse('favicon.ico')
 
 @app.get('/')
 async def root():
@@ -92,3 +99,57 @@ async def get_brand(brand_id: int = 1):
 @app.get('/media/{file_path:path}')
 async def get_media_cap(file_path):
     return FileResponse(os.path.join(conf.IMAGE_DIR, file_path))
+
+@app.get('/CLIENT_gen_token')
+async def gen_token():
+    vk_access_email = 1 << 22
+    return RedirectResponse(f'https://oauth.vk.com/authorize?client_id={conf.VKAPP_ID}&'
+                            f'display=page&redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}&'
+                            f'scope={vk_access_email}&'
+                            f'response_type=code')
+
+@app.get('/CLIENT_users_get')
+async def users_get():
+    access_token = '0'
+    user_id = '0'
+
+    client = httpx.AsyncClient()
+    req = await client.get(f'https://api.vk.com/method/users.get?user_id={user_id}&'
+                           f'access_token={access_token}&'
+                           f'fields=uid&'
+                           f'v=5.131')
+
+    if req.status_code != 200:
+        return req.status_code
+
+    jreq = json.loads(req.text)
+    return jreq
+
+@app.get('/vkauth')
+async def vkauth(code: str = None, error: str = None):
+    client = httpx.AsyncClient()
+
+    if code is None:
+        return {'error_code': error}
+
+    req = await client.get(f'https://oauth.vk.com/access_token?client_id={conf.VKAPP_ID}&'
+                           f'client_secret={conf.VKAPP_SERCRET_KEY}&'
+                           f'code={code}&'
+                           f'redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}')
+
+    if req.status_code != 200:
+        return req.status_code
+
+    jreq = json.loads(req.text)
+    access_token = jreq['access_token']
+    user_id      = jreq['user_id']
+    email        = jreq['email']
+
+    if access_token is None:
+        return {'error_token': error}
+    else:
+        return {
+            'user_id': user_id,
+            'email': email,
+            'access_token': access_token
+        }
