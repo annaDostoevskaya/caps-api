@@ -14,7 +14,7 @@ class Config:
     ## https://stackoverflow.com/questions/35061914/how-to-change-database-url-for-a-heroku-application
     APPLICATION_URL = os.environ.get('APPLICATION_URL') or 'http://' + IP_ADDRESS + ':' + PORT
 
-    STATIC_IMAGE_DIR = 'media/'
+    IMAGE_DIR = 'media/'
     API_VER = os.environ.get('CAPS_API_VER') or 'v1'
 
     SQLALCHEMY_DATABASE_URL = os.environ.get('DATABASE_URL')

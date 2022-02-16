@@ -70,12 +70,6 @@ class Cap(Base):
     caps_brand_id = Column(Integer, ForeignKey('cap_brands.id'))
     caps_brand = relationship('CapsBrand', backref='parents', lazy='joined')
     # caps_brand = relationship('CapBrand', back_populates='parents')
-
-    ## TODO(annad): find method use array in SQLite.
-    ## Plugins? Or...
-    ## NOTE(annad): About SQLite: https://vk.com/wall-201010673_790
-    ## Mb change database appliaction?
-
     size = Column(postgresql.ARRAY(postgresql.INTEGER))
 
     def __repr__(self):

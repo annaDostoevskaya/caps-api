@@ -67,7 +67,7 @@ async def get_caps(number_page: int = 1, pg_size: int = 5):
 
 
     for cap in caps:
-        cap.image = conf.base_url_generate('/' + cap.image)
+        cap.image = conf.base_url_generate('/' + conf.IMAGE_DIR + cap.image)
         res['results'].append(cap.get_dict_repr())
 
     return res
@@ -84,11 +84,11 @@ async def get_brand(brand_id: int = 1):
         return None
 
     brand: CapsBrand = brand[0]
-    brand.image = conf.base_url_generate('/' + brand.image)
+    brand.image = conf.base_url_generate('/' + conf.IMAGE_DIR + brand.image)
     res = brand.get_dict_repr()
 
     return res
 
 @app.get('/media/{file_path:path}')
 async def get_media_cap(file_path):
-    return FileResponse(os.path.join(conf.STATIC_IMAGE_DIR, file_path))
+    return FileResponse(os.path.join(conf.IMAGE_DIR, file_path))
