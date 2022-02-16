@@ -36,6 +36,7 @@ async def get_caps_db_request(pg: Page) -> list[Cap]:
     return caps
 
 
+## TODO(annad): Host it on HEROKU and check!
 # @app.get('/favicon.ico', include_in_schema=False)
 # async def favicon():
 #     return FileResponse('favicon.ico')
@@ -46,6 +47,7 @@ async def root():
 
 @app.get('/api/v1/caps/{cap_id}')
 async def get_cap_by_id(cap_id: int):
+    # TODO(annad): Rewrite!
     # NOTE(annad): Mb made specificly request for ONE cap?..
     res = RedirectResponse(url=f'/api/v1/caps/?number_page={cap_id}&pg_size=1')
     return res
@@ -79,7 +81,7 @@ async def get_caps(number_page: int = 1, pg_size: int = 5):
 
     return res
 
-
+## TODO(annad): Add method for get more brands. Analog @app.get('/api/v1/caps/')!
 @app.get('/api/v1/brands/{brand_id}/')
 async def get_brand(brand_id: int = 1):
     if brand_id <= 0:
@@ -100,6 +102,7 @@ async def get_brand(brand_id: int = 1):
 async def get_media_cap(file_path):
     return FileResponse(os.path.join(conf.IMAGE_DIR, file_path))
 
+## TODO(annad): Move to dev/
 @app.get('/CLIENT_gen_token')
 async def gen_token():
     vk_access_email = 1 << 22
@@ -108,6 +111,7 @@ async def gen_token():
                             f'scope={vk_access_email}&'
                             f'response_type=code')
 
+## TODO(annad): Move to dev/
 @app.get('/CLIENT_users_get')
 async def users_get():
     access_token = '0'
@@ -119,7 +123,7 @@ async def users_get():
                            f'fields=uid&'
                            f'v=5.131')
 
-    if req.status_code != 200:
+    if req.status_code != 200: ## TODO(annad): Write normal check of status_code and request.
         return req.status_code
 
     jreq = json.loads(req.text)
@@ -127,6 +131,7 @@ async def users_get():
 
 @app.get('/vkauth')
 async def vkauth(code: str = None, error: str = None):
+    ## TODO(annad): Refactoring!
     client = httpx.AsyncClient()
 
     if code is None:
@@ -137,16 +142,17 @@ async def vkauth(code: str = None, error: str = None):
                            f'code={code}&'
                            f'redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}')
 
-    if req.status_code != 200:
+    if req.status_code != 200: ## TODO(annad): Write normal check of status_code and request.
         return req.status_code
 
+    ## TODO(annad): Add DATABASE table.
     jreq = json.loads(req.text)
     access_token = jreq['access_token']
     user_id      = jreq['user_id']
     email        = jreq['email']
 
     if access_token is None:
-        return {'error_token': error}
+        return {'error_token': error} ## TODO(annad): More information Errors feedback.
     else:
         return {
             'user_id': user_id,
