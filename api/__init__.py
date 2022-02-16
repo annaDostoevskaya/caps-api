@@ -11,7 +11,7 @@ conf = Config()
 
 ## NOTE(annad): `Base.metadata.create_all(DBEngine)` for add in base tables, ORM.
 Base = declarative_base()
-DBEngine = create_engine(conf.SQLALCHEMY_DATABASE_URL, echo=True,)
+DBEngine = create_engine(conf.SQLALCHEMY_DATABASE_URL, echo=conf.SQLALCHEMY_ECHO)
 DBSession = sessionmaker(
     binds = {
         Base: DBEngine

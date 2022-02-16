@@ -12,8 +12,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URL = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = os.environ.get('SQLALCHEMY_ECHO') or ''
-
+    SQLALCHEMY_ECHO = False
 
     def base_url_generate(self, body='/'):
         return self.APPLICATION_URL + body

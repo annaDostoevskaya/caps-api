@@ -1,2 +1,4 @@
 __pycache__
 .vs
+.env
+Procfile.local
