@@ -9,7 +9,7 @@ app.description = 'It\'s CapsApi, API for internet shop of caps'
 
 conf = Config()
 
-# from dev.vkauth_test import *
+from dev.vkauth_test import *
 
 ## NOTE(annad): `Base.metadata.create_all(DBEngine)` for add in base tables, ORM.
 Base = declarative_base()
