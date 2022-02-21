@@ -9,21 +9,6 @@ from fastapi.responses import FileResponse, RedirectResponse
 import httpx
 import json
 
-'''
-from pydantic import BaseModel
-
-class __Data(BaseModel):
-    name:   str
-    age:    int
-
-_d = __Data(name='Anna', age=20)
-
-@app.post('/posting-data/')
-def posting_data(data: __Data):
-    print(data)
-    return {'Result':'SUCCESS'}
-'''
-
 async def get_caps_brand_db_request(brand_id: int) -> list[CapsBrand]:
     with DBSession() as sess:
         brand = sess.query(CapsBrand).filter(CapsBrand.id == brand_id).all()
@@ -37,9 +22,9 @@ async def get_caps_db_request(pg: Page) -> list[Cap]:
 
 
 ## TODO(annad): Host it on HEROKU and check!
-# @app.get('/favicon.ico', include_in_schema=False)
-# async def favicon():
-#     return FileResponse('favicon.ico')
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse('favicon.ico')
 
 @app.get('/')
 async def root():
@@ -102,60 +87,24 @@ async def get_brand(brand_id: int = 1):
 async def get_media_cap(file_path):
     return FileResponse(os.path.join(conf.IMAGE_DIR, file_path))
 
-## TODO(annad): Move to dev/
-@app.get('/CLIENT_gen_token')
-async def gen_token():
-    vk_access_email = 1 << 22
-    return RedirectResponse(f'https://oauth.vk.com/authorize?client_id={conf.VKAPP_ID}&'
-                            f'display=page&redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}&'
-                            f'scope={vk_access_email}&'
-                            f'response_type=code')
-
-## TODO(annad): Move to dev/
-@app.get('/CLIENT_users_get')
-async def users_get():
-    access_token = '0'
-    user_id = '0'
-
-    client = httpx.AsyncClient()
-    req = await client.get(f'https://api.vk.com/method/users.get?user_id={user_id}&'
-                           f'access_token={access_token}&'
-                           f'fields=uid&'
-                           f'v=5.131')
-
-    if req.status_code != 200: ## TODO(annad): Write normal check of status_code and request.
-        return req.status_code
-
-    jreq = json.loads(req.text)
-    return jreq
-
+## http://192.168.2.136:8080/CLIENT_gen_token
 @app.get('/vkauth')
 async def vkauth(code: str = None, error: str = None):
-    ## TODO(annad): Refactoring!
     client = httpx.AsyncClient()
-
-    if code is None:
-        return {'error_code': error}
-
     req = await client.get(f'https://oauth.vk.com/access_token?client_id={conf.VKAPP_ID}&'
                            f'client_secret={conf.VKAPP_SERCRET_KEY}&'
                            f'code={code}&'
                            f'redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}')
-
-    if req.status_code != 200: ## TODO(annad): Write normal check of status_code and request.
-        return req.status_code
+    req.raise_for_status()
 
     ## TODO(annad): Add DATABASE table.
-    jreq = json.loads(req.text)
+    jreq: dict = json.loads(req.text)
+    if jreq.setdefault("error", 0):
+        return jreq
+
+    # def write to db
     access_token = jreq['access_token']
     user_id      = jreq['user_id']
     email        = jreq['email']
 
-    if access_token is None:
-        return {'error_token': error} ## TODO(annad): More information Errors feedback.
-    else:
-        return {
-            'user_id': user_id,
-            'email': email,
-            'access_token': access_token
-        }
+    return jreq
