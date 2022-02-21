@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse
 from api import conf
 
 
+## TODO(annad): Mb move it to another module and finalize? But how?
 @app.get('/CLIENT_gen_token')
 async def gen_token():
     vk_access_email = 1 << 22

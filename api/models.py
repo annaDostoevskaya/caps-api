@@ -10,7 +10,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
 
 
-
 class CapsBrand(Base):
     __tablename__ = 'cap_brands'
     __tableargs__ = {
@@ -75,7 +74,7 @@ class User(Base):
     __tableargs = {
         'comment': 'The table stores names, e-mails, vk-id, avatar and tokens of users'
     }
-
+    ## TODO(annad): More fields? datatime creating? or...?
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     name = Column(String(64))
     email = Column(String(254), index=True)
@@ -92,4 +91,5 @@ class User(Base):
     def display(self):
         print(self.get_dict_repr())
 
+## NOTE(annad): We must check how work with this.
 # Base.metadata.create_all(DBEngine, checkfirst=True)

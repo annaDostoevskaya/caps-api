@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 import httpx
 import json
 
+# TODO(annad): All the same, it is worth making requests in a separate file
 async def get_caps_brand_db_request(brand_id: int) -> list[CapsBrand]:
     with DBSession() as sess:
         brand = sess.query(CapsBrand).filter(CapsBrand.id == brand_id).all()
@@ -20,10 +21,17 @@ async def get_caps_db_request(pg: Page) -> list[Cap]:
         caps = sess.query(Cap).filter(Cap.id >= pg.start_id(), Cap.id < pg.end_id()).all()
     return caps
 
+async def get_user_db_request(user_id: int) -> list[User]:
+    with DBSession() as sess:
+        users = sess.query(User).filter(User.id == user_id).all()
+    return users
+
 async def post_user_db_request(user: User):
     with DBSession() as sess:
         sess.add(user)
         sess.commit()
+
+
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
@@ -120,7 +128,7 @@ async def vkauth(code: str = None, error: str = None):
                            f'client_secret={conf.VKAPP_SERCRET_KEY}&'
                            f'code={code}&'
                            f'redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}')
-    req.raise_for_status()
+    req.raise_for_status()      # NOTE(annad): I still doubt it's possible.
 
     jreq: dict = json.loads(req.text)
     if jreq.setdefault('error', 0):
@@ -130,5 +138,30 @@ async def vkauth(code: str = None, error: str = None):
     user_id      = jreq['user_id']
     email        = jreq['email']
     res = await add_to_database(user_id, email, access_token)
+
+    return res
+
+
+@app.get('/get_vk_user/{user_id}')
+async def get_vk_user(user_id: int):
+    '''
+    TODO(annad): REMOVE! NO DEPLOY IT!
+    TODO(annad): REMOVE! NO DEPLOY IT!
+    TODO(annad): REMOVE! NO DEPLOY IT!
+    WARNING!!! WE SHOULD NOT TRANSFER THE TOKEN IN THIS WAY!
+    THIS COMPLETES THE SAFETY OF USERS. THE FUNCTION IS
+    WRITTEN EXCLUSIVELY FOR THE MODE OF
+    DEBUGING AND CHECKING THE PERFORMANCE OF THE DATABASE!!!
+    '''
+    if user_id <= 0:
+        return None
+
+    users = await get_user_db_request(user_id)
+
+    if len(users) != 1:
+        return None
+
+    user: User = users[0]
+    res = user.get_dict_repr()
 
     return res
