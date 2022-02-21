@@ -1,10 +1,15 @@
 from api import Base, DBEngine
+
 from datetime import datetime
+from fastapi.encoders import jsonable_encoder
+
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, Text, Date, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
+
+
 
 class CapsBrand(Base):
     __tablename__ = 'cap_brands'
@@ -13,8 +18,6 @@ class CapsBrand(Base):
                    'It\'s relationshep from Cap.brand, '
                    'where brand is ID in this table.'
     }
-
-    dict_repr = None
 
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     name = Column(String(64))
@@ -26,26 +29,11 @@ class CapsBrand(Base):
         return '<CapsBrand id: {id}, name: {name}>'.format(id=self.id, name=self.name)
 
     def get_dict_repr(self):
-        if self.dict_repr is None:
-            self.dict_repr = {
-                'id': self.id,
-                'name': self.name,
-                'description': self.description,
-                'image': self.image
-            }
-
-        return self.dict_repr
+        return jsonable_encoder(self)
 
     def display(self):
-        str_from_dict = ('id: {id}\n'
-                         'name: {name}\n'
-                         'description: {description}\n'
-                         'image: {image}\n'
-        ).format_map(
-            self.get_dict_repr()
-        )
+        print(self.get_dict_repr())
 
-        print(str_from_dict)
 
 class Cap(Base):
     __tablename__ = 'caps'
@@ -54,7 +42,6 @@ class Cap(Base):
                    'price, sell price, date of create and update, '
                    'brand in name and index, size.'
     }
-    dict_repr = None # Cache.
 
     id = Column(Integer, index=True, primary_key=True, autoincrement=True)
     name = Column(String(64))
@@ -75,38 +62,12 @@ class Cap(Base):
         return "<Caps id: {id}, name: {name}>".format(id=self.id, name=self.name)
 
     def get_dict_repr(self):
-        if self.dict_repr is None:
-            self.dict_repr = {
-                "id": self.id,
-                "name": self.name,
-                "image": self.image,
-                "description": self.description,
-                "price": self.price,
-                "created": self.created,
-                "updated": self.updated,
-                "new_price": self.new_price,
-                "brand": self.caps_brand_id, ## Change from self.brand(!)
-                "size": self.size
-            }
-
-        return self.dict_repr
+        res: dict = jsonable_encoder(self)
+        res.pop('caps_brand', None)
+        return res
 
     def display(self):
-        str_repr_from_dict = ('id: {id};\n'
-                              'name: {name};\n'
-                              'image: {image};\n'
-                              'description: \"{description}\";\n'
-                              'price: {price};\n'
-                              'created: {created};\n'
-                              'updated: {updated};\n'
-                              'new_price: {new_price};\n'
-                              'brand index: {brand};\n'
-                              'size: {size};\n'
-        ).format_map(
-            self.get_dict_repr()
-        )
-
-        print(str_repr_from_dict)
+        print(self.get_dict_repr())
 
 
 class User(Base):
@@ -125,7 +86,10 @@ class User(Base):
     def __repr__(self):
         return f'<VKUser id: {self.id}, vk-id: {self.vk_id}>'
 
-    def display(self):
-        print(self)
+    def get_dict_repr(self):
+        return jsonable_encoder(self)
 
-Base.metadata.create_all(DBEngine, checkfirst=True)
+    def display(self):
+        print(self.get_dict_repr())
+
+# Base.metadata.create_all(DBEngine, checkfirst=True)
