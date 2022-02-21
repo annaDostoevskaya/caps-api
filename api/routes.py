@@ -21,7 +21,6 @@ async def get_caps_db_request(pg: Page) -> list[Cap]:
     return caps
 
 
-## TODO(annad): Host it on HEROKU and check!
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
     return FileResponse('favicon.ico')
