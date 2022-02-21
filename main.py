@@ -4,9 +4,10 @@
 from api import app, routes, models, conf
 from uvicorn import run
 
-# from dev import dbutils
+from dev import dbutils
 
 if __name__ == '__main__':
+    dbutils.print_all_database_user_table()
     # dbutils.fill()
-    run(app, host=conf.IP_ADDRESS, port=int(conf.PORT))
+    # run(app, host=conf.IP_ADDRESS, port=int(conf.PORT))
 

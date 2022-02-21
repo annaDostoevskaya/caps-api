@@ -17,8 +17,9 @@ print('\n\n\n')
 
 from os import path
 
-from api.models import  Cap, CapsBrand
+from api.models import  Cap, CapsBrand, User
 from api import DBSession, Base, DBEngine
+from fastapi.encoders import jsonable_encoder
 
 from dev import db_dict_repr
 
@@ -99,3 +100,11 @@ def fill():
     fill_db_cap_from_dict(db_dict_repr.cap_id_8)
     fill_db_cap_from_dict(db_dict_repr.cap_id_9)
     fill_db_cap_from_dict(db_dict_repr.cap_id_10)
+
+from json import dumps
+def print_all_database_user_table():
+    with DBSession() as sess:
+        all_users = sess.query(User).filter_by().all()
+
+    for user in all_users:
+        print(jsonable_encoder(user))

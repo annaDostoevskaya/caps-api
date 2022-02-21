@@ -1,11 +1,10 @@
-from api import Base
+from api import Base, DBEngine
 from datetime import datetime
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, Text, Date, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
-
 
 class CapsBrand(Base):
     __tablename__ = 'cap_brands'
@@ -108,3 +107,25 @@ class Cap(Base):
         )
 
         print(str_repr_from_dict)
+
+
+class User(Base):
+    __tablename__ = 'User'
+    __tableargs = {
+        'comment': 'The table stores names, e-mails, vk-id, avatar and tokens of users'
+    }
+
+    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
+    name = Column(String(64))
+    email = Column(String(254), index=True)
+    vk_id = Column(Integer, index=True)
+    avatar = Column(String(256))
+    token = Column(String(256))
+
+    def __repr__(self):
+        return f'<VKUser id: {self.id}, vk-id: {self.vk_id}>'
+
+    def display(self):
+        print(self)
+
+Base.metadata.create_all(DBEngine, checkfirst=True)

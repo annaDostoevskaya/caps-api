@@ -1,7 +1,7 @@
 import os
 
 from api import app, conf, DBSession
-from api.models import Cap, CapsBrand
+from api.models import Cap, CapsBrand, User
 from api.paging import Page
 
 from fastapi.responses import FileResponse, RedirectResponse
@@ -20,6 +20,10 @@ async def get_caps_db_request(pg: Page) -> list[Cap]:
         caps = sess.query(Cap).filter(Cap.id >= pg.start_id(), Cap.id < pg.end_id()).all()
     return caps
 
+async def post_user_db_request(user: User):
+    with DBSession() as sess:
+        sess.add(user)
+        sess.commit()
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
@@ -86,6 +90,28 @@ async def get_brand(brand_id: int = 1):
 async def get_media_cap(file_path):
     return FileResponse(os.path.join(conf.IMAGE_DIR, file_path))
 
+async def add_to_database(user_id, email, access_token):
+    client = httpx.AsyncClient()
+    req = await client.get(f'https://api.vk.com/method/users.get?user_id={user_id}&'
+                           f'access_token={access_token}&'
+                           f'fields=uid,photo_max_orig&'
+                           f'v=5.131')
+    jreq: dict = json.loads(req.text)
+    if jreq.setdefault('error', 0):
+        return jreq
+
+    u = User()
+    u.name = jreq['response'][0]['first_name'] + ' ' + jreq['response'][0]['last_name']
+    u.email = email
+    u.vk_id = jreq['response'][0]['id']
+    u.avatar = jreq['response'][0]['photo_max_orig']
+    u.token = access_token
+
+    await post_user_db_request(u)
+
+    return u
+
+
 ## http://192.168.2.136:8080/CLIENT_gen_token
 @app.get('/vkauth')
 async def vkauth(code: str = None, error: str = None):
@@ -96,14 +122,13 @@ async def vkauth(code: str = None, error: str = None):
                            f'redirect_uri={conf.base_url_generate(conf.VKREDIRECT_URL)}')
     req.raise_for_status()
 
-    ## TODO(annad): Add DATABASE table.
     jreq: dict = json.loads(req.text)
-    if jreq.setdefault("error", 0):
+    if jreq.setdefault('error', 0):
         return jreq
 
-    # def write to db
     access_token = jreq['access_token']
     user_id      = jreq['user_id']
     email        = jreq['email']
+    res = await add_to_database(user_id, email, access_token)
 
-    return jreq
+    return res

@@ -12,7 +12,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URL = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ECHO = True ## DEBUG!
 
     VKAPP_ID = os.environ.get('VKAPP_ID')
     VKAPP_SERCRET_KEY = os.environ.get('VKAPP_SECRET_KEY')
