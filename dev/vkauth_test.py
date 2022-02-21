@@ -5,7 +5,7 @@ import json
 from fastapi.responses import RedirectResponse
 from api import conf
 
-## TODO(annad): Move to dev/
+
 @app.get('/CLIENT_gen_token')
 async def gen_token():
     vk_access_email = 1 << 22
@@ -15,7 +15,7 @@ async def gen_token():
                             f'scope={vk_access_email+vk_access_token_forever}&'
                             f'response_type=code')
 
-## TODO(annad): Move to dev/
+
 @app.get('/CLIENT_users_get')
 async def users_get():
     access_token = '0'
