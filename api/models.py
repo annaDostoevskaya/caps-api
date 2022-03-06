@@ -52,6 +52,7 @@ class Cap(Base):
     new_price = Column(Float, index=True)
 
     # Relastionship with CapBrand table.
+    # TODO(annad): https://vk.com/wall-201010673_1026
     caps_brand_id = Column(Integer, ForeignKey('cap_brands.id'))
     caps_brand = relationship('CapsBrand', backref='parents', lazy='joined')
     # caps_brand = relationship('CapBrand', back_populates='parents')
@@ -80,7 +81,8 @@ class User(Base):
     email = Column(String(254), index=True)
     vk_id = Column(Integer, index=True)
     avatar = Column(String(256))
-    token = Column(String(256))
+    token = Column(String(256)) ## we are don't storage token, because
+                                ## it check in vk_app;
 
     def __repr__(self):
         return f'<VKUser id: {self.id}, vk-id: {self.vk_id}>'
